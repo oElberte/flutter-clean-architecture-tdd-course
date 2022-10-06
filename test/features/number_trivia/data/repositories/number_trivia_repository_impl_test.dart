@@ -34,17 +34,33 @@ void main() {
     );
   });
 
+  void runTestsOnline(Function body) {
+    group('Device is online', () {
+      setUp(() {
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      });
+
+      body();
+    });
+  }
+
+  void runTestsOffline(Function body) {
+    group('Device is offline', () {
+      setUp(() {
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+      });
+
+      body();
+    });
+  }
+
   group('getConcreteNumberTrivia', () {
     final tNumber = 1;
     final tNumberTriviaModel =
         NumberTriviaModel(number: tNumber, text: 'Test Trivia');
     final NumberTrivia tNumberTrivia = tNumberTriviaModel;
 
-    group('Device is online', () {
-      setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      });
-
+    runTestsOnline(() {
       test(
         'Should check if the device is online',
         () async {
@@ -99,11 +115,7 @@ void main() {
       );
     });
 
-    group('Device is offline', () {
-      setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
-      });
-
+    runTestsOffline(() {
       test(
         'Should return last locally cached data when the cached data is present',
         () async {
