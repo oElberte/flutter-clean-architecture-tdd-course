@@ -55,5 +55,23 @@ void main() {
         verify(mockInputConverter.stringToUnsignedInteger(tNumberString));
       },
     );
+
+    test(
+      //[Error] means that is an Error State.
+      'Should emit [Error] when the input is invalid',
+      () async {
+        //arrange
+        when(mockInputConverter.stringToUnsignedInteger(any))
+            .thenReturn(Left(InvalidInputFailure()));
+        //assert later
+        final expected = [
+          Empty(),
+          Error(message: InvalidInputFailureMessage),
+        ];
+        expectLater(bloc.state, emitsInOrder(expected));
+        //act
+        bloc.dispatch(GetTriviaForConcreteNumber(tNumberString));
+      },
+    );
   });
 }
