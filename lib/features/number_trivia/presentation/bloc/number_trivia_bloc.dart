@@ -49,7 +49,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
           final failureOrTrivia =
               await getConcreteNumberTrivia(Params(number: integer));
           yield failureOrTrivia.fold(
-            (failure) => throw UnimplementedError(),
+            (failure) => Error(message: ServerFailureMessage),
             (trivia) => Loaded(trivia: trivia),
           );
         },

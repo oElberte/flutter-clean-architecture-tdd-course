@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_clean_architecture_tdd_course/core/error/failure.dart';
 import 'package:flutter_clean_architecture_tdd_course/core/util/input_converter.dart';
 import 'package:flutter_clean_architecture_tdd_course/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:flutter_clean_architecture_tdd_course/features/number_trivia/domain/usecases/get_concrete_number_trivia.dart';
@@ -103,6 +104,25 @@ void main() {
           Empty(),
           Loading(),
           Loaded(trivia: tNumberTrivia),
+        ];
+        expectLater(bloc.state, emitsInOrder(expected));
+        //act
+        bloc.dispatch(GetTriviaForConcreteNumber(tNumberString));
+      },
+    );
+
+    test(
+      'Should emit [Loading, Error] when getting data fails',
+      () async {
+        //arrange
+        setUpMockInputConverterSuccess();
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => Left(ServerFailure()));
+        //assert later
+        final expected = [
+          Empty(),
+          Loading(),
+          Error(message: ServerFailureMessage),
         ];
         expectLater(bloc.state, emitsInOrder(expected));
         //act
