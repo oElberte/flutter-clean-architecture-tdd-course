@@ -90,5 +90,24 @@ void main() {
         verify(mockGetConcreteNumberTrivia(Params(number: tNumberParsed)));
       },
     );
+
+    test(
+      'Should emit [Loading, Loaded] when data is gotten successfully',
+      () async {
+        //arrange
+        setUpMockInputConverterSuccess();
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => Right(tNumberTrivia));
+        //assert later
+        final expected = [
+          Empty(),
+          Loading(),
+          Loaded(trivia: tNumberTrivia),
+        ];
+        expectLater(bloc.state, emitsInOrder(expected));
+        //act
+        bloc.dispatch(GetTriviaForConcreteNumber(tNumberString));
+      },
+    );
   });
 }
