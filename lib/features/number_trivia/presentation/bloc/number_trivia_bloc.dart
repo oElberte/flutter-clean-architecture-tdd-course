@@ -50,15 +50,22 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
           final failureOrTrivia =
               await getConcreteNumberTrivia(Params(number: integer));
           yield failureOrTrivia.fold(
-            (failure) => Error(
-              message: failure is ServerFailure
-                  ? ServerFailureMessage
-                  : CacheFailureMessage,
-            ),
+            (failure) => Error(message: _mapFailureToMessage(failure)),
             (trivia) => Loaded(trivia: trivia),
           );
         },
       );
+    }
+  }
+
+  String _mapFailureToMessage(Failure failure) {
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return ServerFailureMessage;
+      case CacheFailure:
+        return CacheFailureMessage;
+      default:
+        return 'Unexpected error.';
     }
   }
 }
