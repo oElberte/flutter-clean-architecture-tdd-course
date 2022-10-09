@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:matcher/matcher.dart';
+import 'package:flutter_clean_architecture_tdd_course/core/error/exception.dart';
 import 'package:flutter_clean_architecture_tdd_course/features/number_trivia/data/datasources/number_trivia_local_data_source.dart';
 import 'package:flutter_clean_architecture_tdd_course/features/number_trivia/data/models/number_trivia_model.dart';
 import 'package:mockito/mockito.dart';
@@ -22,7 +24,8 @@ void main() {
   });
 
   group('getLastNumberTrivia', () {
-    final tNumberTriviaModel = NumberTriviaModel.fromJson(json.decode(fixture('trivia_cached.json')));
+    final tNumberTriviaModel =
+        NumberTriviaModel.fromJson(json.decode(fixture('trivia_cached.json')));
 
     test(
       'Should return NumberTriviaModel from SharedPreferences when there is one in the cache',
@@ -35,6 +38,20 @@ void main() {
         //assert
         verify(mockSharedPreferences.getString(CachedNumberTrivia));
         expect(result, equals(tNumberTriviaModel));
+      },
+    );
+
+    test(
+      'Should throw CacheException when there is not a cached value',
+      () async {
+        //arrange
+        when(mockSharedPreferences.getString(any)).thenReturn(null);
+        //act
+        final call = dataSource.getLastNumberTrivia;
+        //assert
+
+        //() => call() calls the method from a higher order function
+        expect(() => call(), throwsA(TypeMatcher<CacheException>()));
       },
     );
   });
