@@ -6,6 +6,7 @@ import 'package:flutter_clean_architecture_tdd_course/features/number_trivia/dat
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:matcher/matcher.dart';
+import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../fixtures/fixture_reader.dart';
@@ -16,9 +17,20 @@ void main() {
   NumberTriviaRemoteDataSourceImpl dataSource;
   MockHttpClient mockHttpClient;
 
+  void setUpMockHttpClientWith({
+    @required String response,
+    @required int code,
+  }) {
+    when(mockHttpClient.get(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => http.Response(response, code));
+  }
+
   setUp(() {
     mockHttpClient = MockHttpClient();
     dataSource = NumberTriviaRemoteDataSourceImpl(client: mockHttpClient);
+
+    //Arrange with success everytime the user don't call 'setUpMockHttpClientWith()'
+    setUpMockHttpClientWith(response: fixture('trivia.json'), code: 200);
   });
 
   group('getConcreteNumberTrivia', () {
@@ -30,9 +42,6 @@ void main() {
       '''Should perform a GET request on a URL with number
         being the endpoint and with appl/json header''',
       () async {
-        //arrange
-        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-            (_) async => http.Response(fixture('trivia.json'), 200));
         //act
         dataSource.getConcreteNumberTrivia(tNumber);
         //assert
@@ -48,9 +57,6 @@ void main() {
     test(
       'Should return NumberTrivia when the response code is 200 (success)',
       () async {
-        //arrange
-        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-            (_) async => http.Response(fixture('trivia.json'), 200));
         //act
         final result = await dataSource.getConcreteNumberTrivia(tNumber);
         //assert
@@ -62,8 +68,7 @@ void main() {
       'Should throw a ServerException when the response is 404 or other',
       () async {
         //arrange
-        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-            (_) async => http.Response('Something went wrong', 404));
+        setUpMockHttpClientWith(response: 'Something went wrong', code: 404);
         //act
         final call = dataSource.getConcreteNumberTrivia;
         //assert
