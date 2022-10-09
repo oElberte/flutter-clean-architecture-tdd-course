@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
@@ -22,10 +24,12 @@ class NumberTriviaRemoteDataSourceImpl implements NumberTriviaRemoteDataSource {
 
   @override
   Future<NumberTriviaModel> getConcreteNumberTrivia(int number) async {
-    client.get(
+    final response = await client.get(
       'http://numbersapi.com/$number',
       headers: {'Content-Type': 'application/json'},
     );
+
+    return NumberTriviaModel.fromJson(json.decode(response.body));
   }
 
   @override

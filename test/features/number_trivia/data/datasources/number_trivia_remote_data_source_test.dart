@@ -23,6 +23,8 @@ void main() {
 
   group('getConcreteNumberTrivia', () {
     final tNumber = 1;
+    final tNumberTriviaModel =
+        NumberTriviaModel.fromJson(json.decode(fixture('trivia.json')));
 
     test(
       '''Should perform a GET request on a URL with number
@@ -40,6 +42,19 @@ void main() {
             headers: {'Content-Type': 'application/json'},
           ),
         );
+      },
+    );
+
+    test(
+      'Should return NumberTrivia when the response code is 200 (success)',
+      () async {
+        //arrange
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+            (_) async => http.Response(fixture('trivia.json'), 200));
+        //act
+        final result = await dataSource.getConcreteNumberTrivia(tNumber);
+        //assert
+        expect(result, equals(tNumberTriviaModel));
       },
     );
   });
