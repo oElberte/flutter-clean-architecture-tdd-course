@@ -57,5 +57,18 @@ void main() {
         expect(result, equals(tNumberTriviaModel));
       },
     );
+
+    test(
+      'Should throw a ServerException when the response is 404 or other',
+      () async {
+        //arrange
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+            (_) async => http.Response('Something went wrong', 404));
+        //act
+        final call = dataSource.getConcreteNumberTrivia;
+        //assert
+        expect(() => call(tNumber), throwsA(TypeMatcher<ServerException>()));
+      },
+    );
   });
 }

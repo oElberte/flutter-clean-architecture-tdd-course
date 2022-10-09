@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_clean_architecture_tdd_course/core/error/exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
@@ -29,7 +30,11 @@ class NumberTriviaRemoteDataSourceImpl implements NumberTriviaRemoteDataSource {
       headers: {'Content-Type': 'application/json'},
     );
 
-    return NumberTriviaModel.fromJson(json.decode(response.body));
+    if (response.statusCode == 200) {
+      return NumberTriviaModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException();
+    }
   }
 
   @override
