@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:flutter_clean_architecture_tdd_course/core/error/exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
+import '../../../../core/error/exception.dart';
 import '../models/number_trivia_model.dart';
 
 abstract class NumberTriviaRemoteDataSource {
