@@ -12,7 +12,9 @@ class NumberTriviaPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Number Trivia'),
       ),
-      body: buildBody(context),
+      body: SingleChildScrollView(
+        child: buildBody(context),
+      ),
     );
   }
 
@@ -75,6 +77,7 @@ class _TriviaControlsState extends State<TriviaControls> {
           onChanged: (value) {
             _inputStr = value;
           },
+          onSubmitted: (_) => dispatchConcrete(),
         ),
         SizedBox(height: 10),
         Row(
@@ -91,7 +94,7 @@ class _TriviaControlsState extends State<TriviaControls> {
             Expanded(
               child: RaisedButton(
                 child: Text('Get random trivia'),
-                onPressed: () {},
+                onPressed: dispatchRandom,
               ),
             ),
           ],
@@ -104,5 +107,11 @@ class _TriviaControlsState extends State<TriviaControls> {
     _controller.clear();
     BlocProvider.of<NumberTriviaBloc>(context)
         .dispatch(GetTriviaForConcreteNumber(_inputStr));
+  }
+
+  void dispatchRandom() {
+    _controller.clear();
+    BlocProvider.of<NumberTriviaBloc>(context)
+        .dispatch(GetTriviaForRandomNumber());
   }
 }
